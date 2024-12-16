@@ -1,0 +1,154 @@
+day1 : Rat in a Maze Problem - I
+Consider a rat placed at position (0, 0) in an n x n square matrix mat. The rat's goal is to reach the destination at position (n-1, n-1). The rat can move in four possible directions: 'U'(up), 'D'(down), 'L' (left), 'R' (right).
+
+The matrix contains only two possible values:
+
+0: A blocked cell through which the rat cannot travel.
+1: A free cell that the rat can pass through.
+Note: In a path, no cell can be visited more than one time. If the source cell is 0, the rat cannot move to any other cell. In case of no path, return an empty list.+
+
+The task is to find all possible paths the rat can take to reach the destination, starting from (0, 0) and ending at (n-1, n-1), under the condition that the rat cannot revisit 
+any cell along the same path. Furthermore, the rat can only move to adjacent cells that are within the bounds of the matrix and not blocked.
+
+Examples:
+
+Input: mat[][] = [[1, 0, 0, 0], [1, 1, 0, 1], [1, 1, 0, 0], [0, 1, 1, 1]]
+Output: ["DDRDRR", "DRDDRR"]
+Explanation: The rat can reach the destination at (3, 3) from (0, 0) by two paths - DRDDRR and DDRDRR, when printed in sorted order we get DDRDRR DRDDRR.
+Input: mat[][] = [[1, 0], [1, 0]]
+Output: []
+Explanation: No path exists and the destination cell is blocked.
+Input: mat = [[1, 1, 1], [1, 0, 1], [1, 1, 1]]
+Output: ["DDRR", "RRDD"]
+Explanation: The rat has two possible paths to reach the destination: 1. "DDRR" 2. "RRDD", These are returned in lexicographically sorted order.
+Constraints:
+2 ≤ mat.size() ≤ 5
+0 ≤ mat[i][j] ≤ 1
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+// User function template for C++
+
+class Solution {
+  public:
+  bool issafe(int x , int y , vector<vector<bool>> &vis,
+  vector<vector<int>> &mat, int n ){
+// codition to chech required condition
+      if((x>=0 && x<n) && (y>=0 && y<n) && (vis[x][y] != 1) && (mat[x][y]==1)){
+          return true;
+      }
+      else{
+          return false;
+      }
+  }
+  void solve(int x , int y , vector<vector<int>> &mat, int n , 
+  vector<string> &ans,vector<vector<bool>> &vis, string path){
+      // base case
+      if(x == n-1  && y == n-1){
+          ans.push_back(path);
+          return;
+      }
+      // visited ko true mark krna h
+      vis[x][y] = true;
+      // down fun. calling]
+      if(issafe(x+1 , y, vis, mat , n)){
+        solve(x+1 , y , mat , n , ans , vis, path + "D");
+      }
+      // LEFT
+      if(issafe(x , y-1, vis, mat , n)){
+        solve(x , y-1 , mat , n , ans , vis, path + "L");
+      }
+      // RIGHT
+      if(issafe(x , y+1 , vis, mat , n)){
+        solve(x , y+1 , mat , n , ans , vis, path + "R");
+      }
+      //UP
+      if(issafe(x-1 , y, vis, mat , n)){
+        solve(x-1 , y , mat , n , ans , vis, path + "U");
+      }
+      vis[x][y]=false;
+  }
+    vector<string> findPath(vector<vector<int>> &mat) {
+     // size of matrix;
+     int n = mat.size();
+     // creat a vector to store the ans ;
+     vector<string> ans;
+     // creat a visited vector 
+     vector<vector<bool>>vis(n , vector<bool>(n , false));
+     // creat a string to store the ans;
+     string path= "";
+     // base condition if starting point is [0][0] then return blank string
+     if(mat[0][0] != 1) return ans;
+     // function calling
+     solve(0 , 0 , mat , n , ans , vis, path);
+     // return ans in string form;
+     return ans;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        string input;
+        getline(cin, input);
+        vector<vector<int>> mat;
+        string innerArray;
+        bool isInsideArray = false;
+
+        for (char c : input) {
+            if (c == '[') {
+                if (isInsideArray) {
+                    innerArray.clear();
+                }
+                isInsideArray = true;
+            } else if (c == ']') {
+                if (isInsideArray && !innerArray.empty()) {
+                    vector<int> row;
+                    stringstream ss(innerArray);
+                    int num;
+
+                    while (ss >> num) {
+                        row.push_back(num);
+                        if (ss.peek() == ',')
+                            ss.ignore();
+                        while (isspace(ss.peek()))
+                            ss.ignore();
+                    }
+
+                    mat.push_back(row);
+                    innerArray.clear();
+                }
+                isInsideArray = false;
+            } else if (isInsideArray) {
+                if (!isspace(c)) {
+                    innerArray += c;
+                }
+            }
+        }
+
+        Solution obj;
+        vector<string> result = obj.findPath(mat);
+        sort(result.begin(), result.end());
+
+        if (result.empty())
+            cout << "[]";
+        else
+            for (int i = 0; i < result.size(); i++)
+                cout << result[i] << " ";
+        cout << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
