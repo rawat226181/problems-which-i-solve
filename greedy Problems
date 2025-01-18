@@ -1,0 +1,150 @@
+problem 1 Minimum plateform required due to which train not wait 
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+class Solution {
+  public:
+    // Function to find the minimum number of platforms required at the
+    // railway station such that no train waits.
+    int findPlatform(vector<int>& arr, vector<int>& dep) {
+        int n = arr.size();
+        
+        // Sort both arrival and departure times
+        sort(arr.begin(), arr.end());
+        sort(dep.begin(), dep.end());
+        
+        // Initialize variables
+        int platforms_needed = 1; // Number of platforms needed currently
+        int result = 1;           // Result to store the maximum platforms needed
+        int i = 1, j = 0;         // i traverses arrival, j traverses departure
+        
+        // Process events in sorted order
+        while (i < n && j < n) {
+            // If a train arrives before the last one departs, increase platform count
+            if (arr[i] <= dep[j]) {
+                platforms_needed++;
+                i++;
+            }
+            // If a train departs before the next train arrives, decrease platform count
+            else {
+                platforms_needed--;
+                j++;
+            }
+            // Update the result with the maximum platforms needed
+            result = max(result, platforms_needed);
+        }
+        
+        return result;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<int> arr, dep;
+        string input;
+
+        // Read first array (arr)
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+
+        // Read second array (dep)
+        getline(cin, input);
+        stringstream ss2(input);
+        while (ss2 >> number) {
+            dep.push_back(number);
+        }
+
+        // Assuming Solution class is defined elsewhere with a method findPlatform
+        Solution ob;
+        cout << ob.findPlatform(arr, dep);
+
+        cout << endl;
+        cout << "~\n";
+    }
+    return 0;
+}
+
+// } Driver Code Ends
+
+
+
+
+
+problem 2 = Maximum meeting in one room 
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+class Solution {
+  public:
+    // Function to find the maximum number of meetings that can
+    // be performed in a meeting room.
+    int maxMeetings(vector<int>& start, vector<int>& end) {
+    int n = start.size();
+    vector<pair<int, int>> meetings(n);
+    for (int i = 0; i < n; i++) {
+        meetings[i] = {start[i], end[i]};
+    }
+    sort(meetings.begin(), meetings.end(), [](pair<int, int> &a, pair<int, int> &b) {
+        return a.second < b.second;
+    });
+    int count = 1;
+    int prevEnd = meetings[0].second;
+    for (int i = 1; i < n; i++) {
+        if (meetings[i].first > prevEnd) {
+            count++;
+            prevEnd = meetings[i].second;
+        }
+    }
+    return count;
+    }
+};
+
+//{ Driver Code Starts.
+
+int main() {
+
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        string input;
+        int num;
+        vector<int> start;
+
+        getline(cin, input);
+        stringstream s2(input);
+        while (s2 >> num) {
+            start.push_back(num);
+        }
+
+        vector<int> end;
+        getline(cin, input);
+        stringstream s22(input);
+        while (s22 >> num) {
+            end.push_back(num);
+        }
+
+        Solution ob;
+        int ans = ob.maxMeetings(start, end);
+        cout << ans << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+// } Driver Code Ends
